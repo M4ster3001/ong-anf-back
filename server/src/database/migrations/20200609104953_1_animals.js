@@ -10,11 +10,12 @@ exports.up = function(knex) {
         table.string( 'info' ).notNullable();
         table.string( 'city' ).notNullable();
         table.string( 'state' ).notNullable();
+        table.integer( 'id_finder' );
         table.boolean( 'status' ).notNullable();
 
-        table.integer( 'id_user' ).notNullable();
+        table.integer( 'id_keeper' ).notNullable();
 
-        table.foreign( 'id_user' )
+        table.foreign( 'id_keeper' )
         .references( 'id' )
         .inTable( 'users' );
 

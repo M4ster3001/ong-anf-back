@@ -3,7 +3,8 @@
     BackEnd( Node.js )
     - controllers e database
      - Users (x)
-     - Animals ( )[ falta fazer show, update e del ] 
+     - Animals (x)
+    - adicionado replaces
 
 - criando as migrations de users e animals ( knex.js e sqlite3 ) (x)
 - criando seeds (x)

@@ -27,6 +27,7 @@ routes.get( '/animals', animalsControllers.index );
 routes.get( '/animals/:id', animalsControllers.show );
 routes.post( '/animals/register', animalsControllers.create );
 routes.put( '/animals/update/:id', animalsControllers.update );
+routes.put( '/animals/found/:id/:id_finder', animalsControllers.update );
 routes.delete( '/animals/delete/:id', animalsControllers.del );
 
 export default routes;

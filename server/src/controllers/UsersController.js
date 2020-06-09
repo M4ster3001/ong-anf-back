@@ -2,54 +2,60 @@ import con from '../database/connection';
 import crypto from 'crypto';
 import bCrypt from 'bcrypt';
 const salts = 12;
+const validadeEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/g;
 
 export default class Users {
 
     async login( req, res ) {
 
         let { email, password } = req.body;
-        email = email.trim();
+        
+        if( validadeEmail.test( email ) === true ) {
 
-        const trx = con.transaction();
+            const trx = con.transaction();
 
-        if( !email || !password ){
+            if( !email || !password ){
 
-            return res.status( 400 ).json({ error: 'Ocorreu um erro ao problema, tente novamente' });
-        }
+                return res.status( 400 ).json({ error: 'Ocorreu um erro ao problema, tente novamente' });
+            }
 
-        try {
+            try {
 
-            const login = await trx( 'users' )
-            .where({ email })
-            .select( 'id', 'password' )
-            .first()
-            .then( async( resp ) => {
+                const login = await trx( 'users' )
+                .where({ email })
+                .select( 'id', 'password' )
+                .first()
+                .then( async( resp ) => {
 
-                if( !resp ) {
+                    if( !resp ) {
 
-                    return res.status( 400 ).json({ error: 'Usuário não localizado' });
-                }
+                        return res.status( 400 ).json({ error: 'Usuário não localizado' });
+                    }
 
-                if( !bCrypt.compareSync( password, resp.password ) ) {
+                    if( !bCrypt.compareSync( password, resp.password ) ) {
 
-                    return res.status( 400 ).json({ error: 'Login ou senha inválidos' });
-                }
+                        return res.status( 400 ).json({ error: 'Login ou senha inválidos' });
+                    }
 
-                const token = crypto.randomBytes( 12 ).toString( 'HEX' );
-                const query = await trx( 'users' ).where( 'id', resp.id ).update({ token })
+                    const token = crypto.randomBytes( 12 ).toString( 'HEX' );
+                    const query = await trx( 'users' ).where( 'id', resp.id ).update({ token })
 
-                if( !query ) {
-                    return res.status( 400 ).json({ error: 'Ocorreu um erro no acesso código 3' });
-                }
+                    if( !query ) {
+                        return res.status( 400 ).json({ error: 'Ocorreu um erro no acesso código 3' });
+                    }
 
-                await trx.commit();
-    
-                return res.json({ token: token });
-            } )
+                    await trx.commit();
+        
+                    return res.json({ token: token });
+                } )
 
-        } catch( er ){
+            } catch( er ){
 
-            throw er;
+                throw er;
+            }
+        } else {
+
+            return res.status( 400 ).json({ message: 'Formato de e-mail inválido' });
         }
         
     }
@@ -89,25 +95,31 @@ export default class Users {
 
         const token = crypto.randomBytes( 12 ).toString( 'HEX' );
 
-        name = name.trim();
-        email = email.trim();
-        phone = phone.trim();
-        password = password.trim();
+        if( validadeEmail.test( email ) === true ) {
 
-        password = bCrypt.hashSync( password, salts );
+            name = name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+            phone = phone.replace( /([^0-9])/g, '' );
+            password = password.trim();
 
-        try{
+            password = bCrypt.hashSync( password, salts );
 
-            const query = await con( 'users' ).insert({ name, email, phone, password });
+            try{
 
-            if( !query ) {
-                return res.status( 400 ).json({ error: 'Ocorreu um erro ao cadastrar o usuario' });
-            } 
+                const query = await con( 'users' ).insert({ name, email, phone, password });
 
-            return res.json( token );
+                if( !query ) {
+                    return res.status( 400 ).json({ error: 'Ocorreu um erro ao cadastrar o usuario' });
+                } 
 
-        } catch( er ){
-            throw er;
+                return res.json( token );
+
+            } catch( er ){
+                throw er;
+            }
+
+        } else {
+
+            return res.status( 400 ).json({ message: 'Formato de e-mail inválido' });
         }
 
     }
@@ -117,11 +129,10 @@ export default class Users {
         let { name, email, phone, password } = req.body;
         const { id } = req.params;
     
-        if( name || email || phone || password ) {
+        if( name || ( email & validadeEmail.test( email ) === true  ) || phone || password ) {
             
-            name = name && name.trim();
-            email = email && email.trim();
-            phone = phone && phone.trim();
+            name = name && name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+            phone = phone && phone.replace( /([^0-9])/g, '' );
             
             if( password ) {
                 password = password && password.trim();
@@ -137,6 +148,9 @@ export default class Users {
 
             return res.json({ message: 'Sucesso ao atualizar os dados!!!' });
 
+        } else if( validadeEmail.test( email ) === false ){
+
+            return res.status( 400 ).json({ message: 'Formato de e-mail inválido' });
         }
 
     }
