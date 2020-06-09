@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "pm2 start ./start.js --exec babel-node --presets babel-preset-env --name animalfinder",
-    "test": "jest",
     "test:watch": "jest --watchAll",
-    "dev": "jest --watchAll ./start"
+    "dev": "nodemon ./start.js --exec babel-node --presets babel-preset-env",
+    "devtest": "jest --watchAll ./start.js"
   },
   "repository": {
     "type": "git",
@@ -20,26 +20,29 @@
   },
   "homepage": "https://github.com/M4ster3001/ProjAnimalFinder#readme",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-latest": "^6.24.1",
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "bcrypt": "^4.0.1",
-    "body-parser": "^1.19.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-latest": "^6.24.1",
     "knex": "^0.21.1",
     "morgan": "^1.10.0",
     "pm2": "^4.4.0",
-    "sqlite3": "^4.2.0",
-    "read-excel-file": "^4.0.6"
+    "read-excel-file": "^4.0.6",
+    "sqlite3": "^4.2.0"
   },
   "devDependencies": {
-    "jest": "^26.0.1",
+    "@babel/polyfill": "^7.10.1",
     "babel-cli": "^6.26.0",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2018": "^1.0.0",
-    "babel-register": "^6.26.0"
+    "babel-register": "^6.26.0",
+    "jest": "^26.0.1",
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2"
   }
 }

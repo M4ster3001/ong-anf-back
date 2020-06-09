@@ -47,7 +47,7 @@ export default class Animals {
 
     }
 
-    async delete( req, res ) {
+    async del( req, res ) {
 
     }
 

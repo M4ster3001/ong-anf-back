@@ -6,8 +6,6 @@ import morgan from 'morgan';
 import path from 'path';
 import fs from 'fs';
 
-console.clear();
-
 require( 'dotenv' ).config({ path: 'variables.env' });
 
 const app = express();
@@ -21,14 +19,14 @@ const corsOptions = {
 
 app.use( cors( corsOptions ) );
 app.use( bodyParser.json() );
-app.use( bodyParser.urlencoded({ urlencoded: true }) );
+app.use( bodyParser.urlencoded({ urlencoded: true, extended: true }) );
 app.use( morgan( process.env.NODE_DEV == 'PRODUCTION' ? 'tiny' : 'dev' ) );
 
-if( !fs.existsSync( './tmp/uplodas' ) ) {
-    fs.mkdirSync( './tmp/uploads' );
+if( !fs.existsSync( './uploads' ) ) {
+    fs.mkdirSync( './uploads' );
 }
 
-app.use( '/images', expres.static( path.resolve( __dirname, '.', 'tmp', 'uploads' ) ) );
+app.use( '/images', express.static( path.resolve( __dirname, '.', 'tmp', 'uploads' ) ) );
 
 app.use( '/', router );
 

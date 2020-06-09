@@ -1,4 +1,6 @@
-require( 'dotnev' ).config({ path: 'variables.env' });
+require( 'dotenv' ).config({ path: 'variables.env' })
+
+console.clear();
 
 import app from './app';
 
@@ -10,4 +12,4 @@ if( app.listen() ) {
     server.close();
 }
 
-const server = app.listen( app.get( 'port' ), () => { `Servidor rodando na porta ${ app.get( 'port' ) }` } )
+const server = app.listen( app.get( 'PORT' ), () => { console.log( `Servidor rodando na porta ${ app.get( 'PORT' ) }` ) } )

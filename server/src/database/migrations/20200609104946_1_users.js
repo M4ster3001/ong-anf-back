@@ -8,6 +8,7 @@ exports.up = function(knex) {
         table.string( 'email' ).notNullable();
         table.string( 'phone' ).notNullable();
         table.string( 'password' ).notNullable();
+        table.string( 'token' );
 
         table.timestamp( 'create_at' ).defaultTo( knex.fn.now() );
     } );
