@@ -12,14 +12,3 @@
     - configuração do arquivo server.js (x)
     - criando as rotas (x)
 
-
-    FrontEnd( React.js )
-
-    - telas
-     - login ( )
-     - cadastro ( )
-     - home ( )
-     - perfil user ( )
-     - show animal ( )
-     - cadastro desaparecido/ edit ( )
-     - 
