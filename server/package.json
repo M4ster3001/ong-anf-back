@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ./start.js --exec babel-node --presets babel-preset-env --name animalfinder",
+    "start": "pm2 start",
     "test:watch": "jest --watchAll",
     "dev": "nodemon ./start.js --exec babel-node --presets babel-preset-env",
     "devtest": "jest --watchAll ./start.js"

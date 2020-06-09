@@ -9,8 +9,8 @@ module.exports = {
     "name": "web",
     "exec_mode": "cluster",
     "instances": numWorkers,
-    "script": "./src/server.ts",
-    "interpreter": "./node_modules/.bin/ts-node",
+    "script": "./start.js",
+    "exec_interpreter": "./node_modules/.bin/babel-node",
     "max_memory_restart": "1G",
     "watch": true,
     env: {
