@@ -60,7 +60,7 @@ export default class Animals {
         let { name, age, info, city, state, url_image, id_keeper } = req.body;
 
         name = name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
-        age = age.replace( /([^0-9])/g, '' );
+        age = age.replace( /([^0-9a-zA-Z])/g, '' );
         info = info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
         city = city.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
         state = state.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
