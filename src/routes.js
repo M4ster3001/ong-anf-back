@@ -9,9 +9,12 @@ const usersControllers = new UsersController();
 import AnimalsController from './controllers/AnimalsController';
 const animalsControllers = new AnimalsController();
 
-  
-routes.get( '/', ( req, res ) => { res.status( 200 ).json({ message: 'Ok get' });  });
-routes.post( '/', ( req, res ) => { res.status( 200 ).json({ message: 'Ok post' });  });
+if( process.env.NODE_DEV == 'DEVELOPMENT' ) { 
+
+    routes.get( '/', ( req, res ) => { res.status( 200 ).json({ message: 'Ok get' });  });
+    routes.post( '/', ( req, res ) => { res.status( 200 ).json({ message: 'Ok post' });  });
+    
+}
 
 //Users
 routes.get( '/users', usersControllers.index );

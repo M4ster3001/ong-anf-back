@@ -1,15 +1,15 @@
 const os = require( 'os' );
 
 const numCPUs = os.cpus().length;
-const numWorkers = Math.round( numCPUs * 0.5 );
+const numWorkers = Math.round( numCPUs * ( numCPUs <= 4 ? 0.5 : 0.8 ) );
 //const free_mem = parseInt( ( os.freemem() - ( os.freemem() * 0.1 ) ) / 1024 ) / 1024;
 
 module.exports = {
   apps : [{
-    "name": "web",
+    "name": "animal_finders",
     "exec_mode": "cluster",
     "instances": numWorkers,
-    "script": "./start.js",
+    "script": "./dist/server.js",
     "exec_interpreter": "./node_modules/.bin/babel-node",
     "max_memory_restart": "1G",
     "watch": true,
@@ -20,17 +20,6 @@ module.exports = {
       "NODE_ENV": "production"
     },
   }],
- 
-  deploy : {
-    production : {
-      user : 'SSH_USERNAME',
-      host : 'SSH_HOSTMACHINE',
-      ref  : 'origin/master',
-      repo : 'GIT_REPOSITORY',
-      path : 'DESTINATION_PATH',
-      'pre-deploy-local': '',
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
-      'pre-setup': ''
-    }
-  },
 };
+
+

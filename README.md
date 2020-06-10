@@ -11,4 +11,7 @@
     - configuração do arquivo app.js (x)
     - configuração do arquivo server.js (x)
     - criando as rotas (x)
+    - upload imagens ( )
+
+    - adicionado no seeds pastas development e production
 

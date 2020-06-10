@@ -6,14 +6,14 @@ module.exports = {
     development: {
       client: 'sqlite3',
       connection: {
-        filename: path.resolve( __dirname, 'src', 'database', 'database.sqlite' ),
+        filename: path.resolve( __dirname, 'src', 'database', 'database_dev.sqlite' ),
         acquireConnectionTimeout: 10000
       },
       migrations: {
         directory: path.resolve( __dirname, 'src', 'database', 'migrations')
       },
       seeds: {
-        directory: path.resolve( __dirname, 'src', 'database', 'seeds' )
+        directory: path.resolve( __dirname, 'src', 'database', 'seeds', 'development' )
       },
       useNullAsDefault: true,
       debug: true,
@@ -34,7 +34,7 @@ module.exports = {
         directory: path.resolve( __dirname, 'src', 'database', 'migrations')
       },
       seeds: {
-        directory: path.resolve( __dirname, 'src', 'database', 'seeds' )
+        directory: path.resolve( __dirname, 'src', 'database', 'seeds', 'production' )
       },
       useNullAsDefault: true,
       pool: {

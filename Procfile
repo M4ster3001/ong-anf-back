@@ -1,1 +1,1 @@
-web: npx run start:dev
+web: npm install & npm start

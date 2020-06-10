@@ -4,25 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start",
-    "start:dev": "pm2 start",
+    "start": "pm2 start ecosystem.config.js",
+    "build": "babel ./src/ -d ./dist",
+    "start:dev": "babel-node ./start.js",
     "test:watch": "jest --watchAll",
     "dev": "nodemon ./start.js --exec babel-node --presets babel-preset-env",
     "devtest": "jest --watchAll ./start.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/M4ster3001/ProjAnimalFinder.git"
+    "url": "git+https://github.com/M4ster3001/ong-anf-back.git"
   },
   "author": "Aldo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/M4ster3001/ProjAnimalFinder/issues"
+    "url": "https://github.com/M4ster3001/ong-anf-back/issues"
   },
-  "homepage": "https://github.com/M4ster3001/ProjAnimalFinder#readme",
+  "homepage": "https://github.com/M4ster3001/ong-anf-back#readme",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
+    "babel-cli": "^6.26.0",
     "babel-preset-latest": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -36,10 +38,10 @@
   },
   "devDependencies": {
     "@babel/polyfill": "^7.10.1",
-    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
-    "babel-preset-env": "^1.7.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-es2018": "^1.0.0",
     "babel-register": "^6.26.0",
     "jest": "^26.0.1",
