@@ -16,3 +16,5 @@
 
     - adicionado no seeds pastas development e production
 
+    - alterado a coluna age para string
+

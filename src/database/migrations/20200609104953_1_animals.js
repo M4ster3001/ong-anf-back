@@ -5,7 +5,7 @@ exports.up = function(knex) {
 
         table.increments( 'id' ).primary();
         table.string( 'name' ).notNullable();
-        table.integer( 'age' );
+        table.string( 'age' );
         table.string( 'url_image' );
         table.string( 'info' ).notNullable();
         table.string( 'city' ).notNullable();
