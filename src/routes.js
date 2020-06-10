@@ -3,6 +3,9 @@ require( 'dotenv' ).config({ path: 'variables.env' });
 
 const routes = Router();
 
+import LocationController from './controllers/LocationController';
+const locationController = new LocationController();
+
 import UsersController from './controllers/UsersController';
 const usersControllers = new UsersController();
 
@@ -15,6 +18,12 @@ if( process.env.NODE_DEV == 'DEVELOPMENT' ) {
     routes.post( '/', ( req, res ) => { res.status( 200 ).json({ message: 'Ok post' });  });
     
 }
+
+//State
+routes.get( '/states', locationController.states );
+
+//Cities
+routes.get( '/cities/:uf', locationController.cities );
 
 //Users
 routes.get( '/users', usersControllers.index );

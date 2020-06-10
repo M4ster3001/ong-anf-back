@@ -5,6 +5,7 @@
     - controllers e database
      - Users (x)
      - Animals (x)
+     - States e Cities(x)
     - adicionado replaces
     - criando as migrations de users e animals ( knex.js e sqlite3 ) (x)
     - criando seeds (x)

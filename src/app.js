@@ -26,7 +26,7 @@ if( !fs.existsSync( './uploads' ) ) {
     fs.mkdirSync( './uploads' );
 }
 
-app.use( '/images', express.static( path.resolve( __dirname, '.', 'tmp', 'uploads' ) ) );
+app.use( '/uploads', express.static( path.resolve( __dirname, '..', 'uploads' ) ) );
 
 app.use( '/', router );
 
