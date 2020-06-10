@@ -88,7 +88,7 @@ export default class Animals {
         if( name || age || info || city || state || url_image || status ) {
 
             name = name && name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
-            age = age && age.replace( /([^0-9])/g, '' );
+            age = age && age.replace( /([^0-9a-zA-Z])/g, '' );
             info = info && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
             city = city && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
             state = state && info.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
