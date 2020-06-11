@@ -1,7 +1,7 @@
 import con from '../database/connection';
 import crypto from 'crypto';
 import bCrypt from 'bcrypt';
-import { check, validationResult } from 'express-validator/check'
+import { validationResult } from 'express-validator'
 const salts = 12;
 
 export default class Users {
@@ -68,11 +68,11 @@ export default class Users {
 
     async show( req, res ) {
 
-        const { id } = req.params;
+        let auth = req['headers']['authorization'].replace( 'Bearer', '' ).trim();
 
         try {
 
-            const data = await con( 'users' ).where( 'id', id ).select( 'id', 'name', 'email', 'phone' ).first();
+            const data = await con( 'users' ).where( 'token', auth ).select( 'id', 'name', 'email', 'phone' ).first();
 
             if( !data ) {
                 return res.status( 400 ).json({ error: 'Usuário não localizado' });
@@ -118,18 +118,28 @@ export default class Users {
     
     async update( req, res ) {
 
-        let { name, email, phone, password } = req.body;
+        let { user_name: name, email, phone, old_password, password } = req.body;
         const { id } = req.params;
     
-        if( name || email || phone || password ) {
+        if( name || email || phone || ( password & old_password ) ) {
             
             name = name && name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
             phone = phone && phone.replace( /([^0-9])/g, '' );
             
-            if( password ) {
-                password = password && password.trim();
-            
+            if( password && old_password ) {
+
+                password = password && password.trim();          
                 password = bCrypt.hashSync( password, salts );
+
+                old_password = old_password && old_password.trim();        
+
+                const compare_pwd = await con( 'users' ).where( 'id', id ).select( 'password' ).first();
+
+                if( !bCrypt.compareSync( old_password, compare_pwd.password ) ) {
+
+                    return res.json({ error: 'Senha antiga incorreta' });
+                }
+
             }
 
             try {

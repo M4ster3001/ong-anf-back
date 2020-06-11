@@ -11,10 +11,10 @@ require( 'dotenv' ).config({ path: 'variables.env' });
 const app = express();
 
 const corsOptions = {
-    origin: process.env.API_URL || '*',
-    methods: 'GET, POST, PUT, DELETE',
+    origin: [ process.env.API_URL || '*' ],
+    methods: ['GET', 'PUT', 'POST', 'DELETE'],
     credentials: true,
-    allowedHeaders: [ '*' ]
+    allowedHeaders: ['Content-Type', 'Authorization']
 }
 
 app.use( cors( corsOptions ) );

@@ -1,4 +1,4 @@
-import { check } from 'express-validator/check';
+import { check } from 'express-validator';
 
 export const Login = {
     validations: [ 

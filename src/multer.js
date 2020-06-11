@@ -16,6 +16,7 @@ const storageTypes = {
         },
         filename: ( req, file, cb ) => {
 
+            console.log( req )
             console.log( file )
 
             crypto.randomBytes( 12, ( err, hash ) => {
@@ -33,8 +34,10 @@ const storageTypes = {
         bucket: process.env.BUCKET,
         contentType: multerS3.AUTO_CONTENT_TYPE,
         acl: 'public-read',
-        key: ( req, file, cb ) => {
+        key: ( req, file, cb ) =>   {
 
+            console.log( req )
+            console.log( file )
             crypto.randomBytes( 12, ( err, hash ) => {
 
                 if( err ) cb( err );

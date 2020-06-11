@@ -22,3 +22,5 @@
 
     - adicionando express-validator para validar os dados e jwt para gerar e controlar o token
 
+    - animals upload e delete agora possuem a integração com a AWS S3
+

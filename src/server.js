@@ -1,6 +1,6 @@
 require( 'dotenv' ).config({ path: 'variables.env' })
 
-console.clear();
+//console.clear();
 
 import app from './app';
 
