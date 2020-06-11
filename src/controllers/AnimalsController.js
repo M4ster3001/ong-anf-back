@@ -7,9 +7,10 @@ export default class Animals {
         const { order = "asc", limit = 10 }  = req.query;
 
         try {
+
             const lstAnimals = await con( 'animals' )
             .where( 'status', '0' )
-            .select( 'id', 'name', 'city', 'state', 'info' )
+            .select( 'id', 'name', 'age', 'url_image', 'info', 'city', 'state' )
             .limit( limit )
             .orderBy( 'id', order );
 
@@ -30,34 +31,55 @@ export default class Animals {
         const { id } = req.params;
         let contact_finder;
 
-        const data = await con( 'animals' )
-        .join( 'users', 'animals.id_keeper', '=', 'users.id' )
-        .where( 'animals.id', id )
-        .select( 'users.name', 'animals.name', 'animals.age', 'animals.info', 'animals.city', 'animals.state', 'animals.id_finder', 'animals.status'  )
-        .first();
+        try {
 
-        if( !data ){
+            const data = await con( 'animals' )
+            .join( 'users', 'animals.id_keeper', '=', 'users.id' )
+            .where( 'animals.id', id )
+            .select( 
+                'users.name', 
+                'animals.name', 
+                'animals.age', 
+                'animals.url_image', 
+                'animals.info', 
+                'animals.city', 
+                'animals.state', 
+                'animals.id_finder', 
+                'animals.status'  
+            )
+            .first();
 
-            return res.status( 400 ).json({ message: 'Animalzinho não localizado' });
-        }
+            if( !data ){
 
-        if( data.id_finder ) {
-
-            contact_finder = await con( 'users' ).where( 'id', data.id_finder ).select( 'email', 'phone' ).first();
-            
-            if( !contact_finder ){
-
-                return res.status( 400 ).json({ message: 'O usuário que notifico não foi encontrado' });
+                return res.status( 400 ).json({ message: 'Animalzinho não localizado' });
             }
-        }
 
-        return res.json({ data, contact_finder });
+            if( data.id_finder ) {
+
+                contact_finder = await con( 'users' ).where( 'id', data.id_finder ).select( 'email', 'phone' ).first();
+                
+                if( !contact_finder ){
+
+                    return res.status( 400 ).json({ message: 'O usuário que notifico não foi encontrado' });
+                }
+            }
+
+            return res.json({ data, contact_finder });
+
+        }catch ( er ) {
+
+            return res.status( 400 ).json({ message: `Ocorreu um erro ao buscar o registro, tente novamente` });
+        }
 
     }
 
     async create( req, res ) {
 
-        let { name, age, info, city, state, url_image, id_keeper } = req.body;
+        console.log( req.body );
+        console.log( req.file );
+
+        let { name, age, info, city, state, id_keeper } = req.body;
+        let{ originalname, size, key, location: url = "" } = req.file;
 
         name = name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
         age = age.replace( /([^0-9a-zA-Z])/g, '' );
@@ -65,18 +87,40 @@ export default class Animals {
         city = city.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
         state = state.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
 
-        const trx = await con.transaction();
-
-        const animal = await trx( 'animals' ).insert({ name, age, info, city, state, url_image, status: false, id_keeper});
-
-        await trx.commit();
-
-        if( !animal ) {
-            
-            return res.status( 400 ).json({ message: 'Não foi possível cadastrar' })
+        if( !url ) {
+            url = ( process.env.NODE_DEV == 'DEV' ? process.env.PATH_LOCAL + key : '' ) 
         }
 
-        return res.json( animal[0] );
+        const url_image = url;
+
+        try {
+
+            const trx = await con.transaction();
+
+            const animal = await trx( 'animals' ).insert({ 
+                name, 
+                age, 
+                info, 
+                city, 
+                state, 
+                url_image, 
+                status: false, 
+                id_keeper
+            });
+
+            await trx.commit();
+
+            if( !animal ) {
+                
+                return res.status( 400 ).json({ message: 'Não foi possível cadastrar' })
+            }
+
+            return res.json( animal[0] );
+
+        }catch ( er ) {
+
+            return res.status( 400 ).json({ message: `Ocorreu um erro ao salvar o desaparecimento, tente novamente` });
+        }
 
     }
     
@@ -92,8 +136,6 @@ export default class Animals {
             info = info && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
             city = city && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
             state = state && info.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
-
-            console.log( id, name, age, info, city, state )
 
             let animal = { 
                 name, 
@@ -116,6 +158,7 @@ export default class Animals {
                 }
         
                 return res.json({ message: 'Dados atualizados' });
+
             } catch( er ) {
 
                 return res.json({ error: 'Ocorreu um erro ao atualizar os dados' })
@@ -140,7 +183,8 @@ export default class Animals {
             return res.status( 204 ).send(); 
 
         } catch ( er ) {
-            throw er;
+
+            return res.status( 400 ).json({ message: 'Ocorreu um erro ao deletar o registro' })
         }
 
     }

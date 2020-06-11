@@ -18,3 +18,7 @@
 
     - alterado a coluna age para string
 
+    - adicionando multer para o upload das imagens
+
+    - adicionando express-validator para validar os dados e jwt para gerar e controlar o token
+
