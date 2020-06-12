@@ -12,3 +12,20 @@
     - configuração do arquivo server.js (x)
     - criando as rotas (x)
 
+ --- Como usar --- 
+
+    npm install -  Instalar as dependências
+    npm start - Iniciar os servidores
+    
+    Caso queira rodar a aplicação localmente, será necessario criar um variables.env para as variaveis com as seguintes variaveis
+    NODE_DEV=
+    PORT=
+    API_URL = 
+    PATH_LOCAL = 
+
+    STORAGE_TYPE = local || s3
+    BUCKET = 
+
+    AWS_ACCESS_KEY_ID=
+    AWS_SECRET_ACCESS_KEY=
+    AWS_DEFAULT_REGION=
