@@ -189,7 +189,7 @@ export default class Animals {
     async update( req, res ) {
 
         let { name, age, info, city, state, status } = req.body;
-        console.log( { name, age, info, city, state, status } );
+
         const { id } = req.params;
         let url_image;
         
