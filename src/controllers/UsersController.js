@@ -101,7 +101,7 @@ export default class Users {
 
             try{
 
-                const query = await con( 'users' ).insert({ name, email, phone, password });
+                const query = await con( 'users' ).insert({ name, email, phone, password, token });
 
                 if( !query ) {
                     return res.status( 400 ).json({ error: 'Ocorreu um erro ao cadastrar o usuario' });

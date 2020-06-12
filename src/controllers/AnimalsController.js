@@ -10,21 +10,30 @@ export default class Animals {
 
     async index( req, res ) {
 
-        const { order = "asc", limit = 10 }  = req.query;
-        const { idUser } = req.params;
+        const { order = "asc", limit = -1, page = '' }  = req.query;
+        const { id } = req.params;
+        const offset = page * limit;
 
         let lstAnimals;
         let qtdeAnimals;
+        let arr = [];
 
         try {
 
-            if( !idUser ) {
+            if( !id ) {
 
                 lstAnimals = await con( 'animals' )
                 .where( 'status', '0' )
                 .select( 'id', 'name', 'age', 'url_image', 'info', 'city', 'state' )
+                .offset( offset )
                 .limit( limit )
-                .orderBy( 'id', order );
+                .orderBy( 'id', order ).then( resp => {
+
+                    resp.forEach( async res => {
+
+                        arr.push({ 'animal': res,  'contact_user': '' });
+                    } )
+                } );
 
                 qtdeAnimals = await con( 'animals' )
                 .where( 'status', '0' )
@@ -33,23 +42,40 @@ export default class Animals {
             } else {
 
                 lstAnimals = await con( 'animals' )
-                .where( 'id_keeper', idUser )
-                .select( 'id', 'name', 'age', 'url_image', 'info', 'city', 'state' )
+                .where( 'id_keeper', id )
+                .select( 'id', 'name', 'age', 'url_image', 'info', 'city', 'state', 'status', 'id_finder' )
+                .offset( offset )
                 .limit( limit )
-                .count( 'id', { as: 'qtde' } )
-                .orderBy( 'id', order );
+                .orderBy( 'id', order ).then( async resp => {
+
+                    resp.forEach(async (res) => {
+                        if (res.id_finder) {
+
+                            let user_found = await con('users').where('id', res.id_finder).select('name', 'phone', 'email').first();
+                            arr.push({ 'animal': res, 'contact_user': user_found });
+
+                        }
+                        else {
+
+                            arr.push({ 'animal': res, 'contact_user': '' });
+
+                        }
+                    })
+                } );
 
                 qtdeAnimals = await con( 'animals' )
-                .where( 'id_keeper', idUser )
+                .where( 'id_keeper', id )
                 .count( 'id', { as: 'qtde' } );
             }
 
-            if( !lstAnimals ){
+            console.log( arr );
+
+            if( !arr ){
 
                 return res.status( 400 ).json({ message: 'Nenhum animal perdido' });
             }
 
-            return res.json({ lstAnimals, qtdeAnimals});
+            return res.json({ 'lstAnimals': arr, qtdeAnimals});
         } catch( er ) {
 
             return res.status( 400 ).json( `Ocorreu um erro ao listar os animais ${ er }` );
@@ -113,7 +139,7 @@ export default class Animals {
 
         name = name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
         age = age.replace( /([^0-9a-zA-Z])/g, '' );
-        info = info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+        info = info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{2,}])/g, '' );
         city = city.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
         state = state.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
 
@@ -157,13 +183,19 @@ export default class Animals {
     async update( req, res ) {
 
         let { name, age, info, city, state, status } = req.body;
-
-        if( req.file ){
-            
-            let{ originalname, size, key, location: url = "" } = req.file;
-        }
-
         const { id } = req.params;
+        let url_image;
+        
+        if( req.file ) {
+            let{ originalname, size, key, location: url = "" } = req.file;
+            
+            if( !url ) {
+                url = ( process.env.NODE_DEV == 'DEVELOPMENT' ? process.env.PATH_LOCAL + key : key ) 
+            }
+
+            url_image = url;
+        }
+        
         
         if( req['headers']['authorization'] ) {
 
@@ -175,23 +207,19 @@ export default class Animals {
             if( auth && path === '/animals/found/:id') {
                 
                 id_finder = await con( 'users' ).where( 'token', auth ).select( 'id' ).first();
+                status = true;
                 
             }
-            
-            if( !url ) {
-                url = ( process.env.NODE_DEV == 'DEVELOPMENT' ? process.env.PATH_LOCAL + key : key ) 
-            }
 
-            const url_image = url;
             
-            if( name || age || info || city || state || url_image || status ) {
-
+            if( name || age || info || city || state || url_image || status  || id_finder ) {
+                
                 name = name && name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
                 age = age && age.replace( /([^0-9a-zA-Z])/g, '' );
                 info = info && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
                 city = city && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
                 state = state && info.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
-
+                
                 let animal = { 
                     name, 
                     age, 
