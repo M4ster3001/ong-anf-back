@@ -45,6 +45,7 @@ routes.get( '/animals/user/:id', animalsControllers.index );
 routes.get( '/animals/:id', animalsControllers.show );
 routes.post( '/animals/register', multer( multerConfig ).single( 'file' ), animalsControllers.create );
 routes.post( '/animals/update/:id', multer( multerConfig ).single( 'file' ), animalsControllers.update );
+routes.put( '/animals/notfound/:id', animalsControllers.update );
 routes.put( '/animals/found/:id', animalsControllers.update );
 routes.delete( '/animals/delete/:id', animalsControllers.del );
 

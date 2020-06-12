@@ -189,6 +189,7 @@ export default class Animals {
     async update( req, res ) {
 
         let { name, age, info, city, state, status } = req.body;
+        let flg_back = 0;
 
         const { id } = req.params;
         let url_image;
@@ -214,12 +215,21 @@ export default class Animals {
             if( auth && path === '/animals/found/:id') {
                 
                 id_finder = await con( 'users' ).where( 'token', auth ).select( 'id' ).first();
+                id_finder = id_finder.id;
                 status = true;
                 
             }
 
+            if( auth && path === '/animals/notfound/:id') {
+                status = false;
+                id_finder = 0;
+                flg_back = 1;
+            }
+
+            console.log( name, age, info, city, state, status, id_finder )
+
             
-            if( name || age || info || city || state || url_image || status  || id_finder ) {
+            if( name || age || info || city || state || url_image || status  || id_finder  || flg_back == 1 ) {
                 
                 name = name && name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
                 age = age && age.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
@@ -235,7 +245,7 @@ export default class Animals {
                     state, 
                     url_image, 
                     status, 
-                    id_finder: id_finder.id 
+                    id_finder 
                 };
 
                 try {
