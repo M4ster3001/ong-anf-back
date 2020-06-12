@@ -1,1 +1,1 @@
-web: npm install & npm start
+web: npm install & babel-node start.js

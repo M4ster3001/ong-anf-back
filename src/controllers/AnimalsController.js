@@ -221,9 +221,9 @@ export default class Animals {
             
             if( name || age || info || city || state || url_image || status  || id_finder ) {
                 
-                name = name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
-                age = age.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
-                info = info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+                name = name && name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+                age = age && age.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
+                info = info && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
                 city = city && city.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
                 state = state && state.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
                 
