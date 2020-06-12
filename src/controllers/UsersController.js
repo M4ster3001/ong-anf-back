@@ -88,7 +88,12 @@ export default class Users {
     }
 
     async create( req, res ) {
-        
+
+        const errors = validationResult( req );
+        if (!errors.isEmpty()) {
+            return res.status( 422 ).json({ errors: errors.array() });
+        }
+
         let { user_name: name, email, phone, password } = req.body;
 
         const token = crypto.randomBytes( 12 ).toString( 'HEX' );
@@ -117,6 +122,11 @@ export default class Users {
     }
     
     async update( req, res ) {
+
+        const errors = validationResult( req );
+        if (!errors.isEmpty()) {
+            return res.status( 422 ).json({ errors: errors.array() });
+        }
 
         let { user_name: name, email, phone, old_password, password } = req.body;
         const { id } = req.params;

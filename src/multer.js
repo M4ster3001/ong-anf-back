@@ -16,9 +16,6 @@ const storageTypes = {
         },
         filename: ( req, file, cb ) => {
 
-            console.log( req )
-            console.log( file )
-
             crypto.randomBytes( 12, ( err, hash ) => {
 
                 if( err ) cb( err );
@@ -36,8 +33,6 @@ const storageTypes = {
         acl: 'public-read',
         key: ( req, file, cb ) =>   {
 
-            console.log( req )
-            console.log( file )
             crypto.randomBytes( 12, ( err, hash ) => {
 
                 if( err ) cb( err );

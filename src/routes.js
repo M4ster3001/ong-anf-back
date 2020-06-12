@@ -15,7 +15,7 @@ const usersControllers = new UsersController();
 import AnimalsController from './controllers/AnimalsController';
 const animalsControllers = new AnimalsController();
 
-import { Login } from './middleware/validation';
+import { Login, User } from './middleware/validation';
 
 if( process.env.NODE_DEV == 'DEVELOPMENT' ) { 
 
@@ -34,8 +34,8 @@ routes.get( '/cities/:uf', locationController.cities );
 //Users
 routes.post( '/login', Login.validations, usersControllers.login );
 routes.get( '/users/profile', usersControllers.show );
-routes.post( '/users/register', usersControllers.create );
-routes.put( '/users/update/:id', usersControllers.update );
+routes.post( '/users/register', User.validations, usersControllers.create );
+routes.put( '/users/update/:id', User.validations, usersControllers.update );
 routes.delete( '/users/delete/:id', usersControllers.del );
 
 
@@ -44,7 +44,7 @@ routes.get( '/animals', animalsControllers.index );
 routes.get( '/animals/user/:id', animalsControllers.index );
 routes.get( '/animals/:id', animalsControllers.show );
 routes.post( '/animals/register', multer( multerConfig ).single( 'file' ), animalsControllers.create );
-routes.put( '/animals/update/:id', multer( multerConfig ).single( 'file' ), animalsControllers.update );
+routes.post( '/animals/update/:id', multer( multerConfig ).single( 'file' ), animalsControllers.update );
 routes.put( '/animals/found/:id', animalsControllers.update );
 routes.delete( '/animals/delete/:id', animalsControllers.del );
 

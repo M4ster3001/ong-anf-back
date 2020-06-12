@@ -24,5 +24,5 @@
 
     - animals upload e delete agora possuem a integração com a AWS S3
 
-    - não está enviando corretamente os dados ao criar o array com o animal e contato de quem o achou, nem sempre envia todos os animais cadastrados
+    - validação dos dados dos usuarios
 

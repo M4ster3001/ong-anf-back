@@ -68,8 +68,6 @@ export default class Animals {
                 .count( 'id', { as: 'qtde' } );
             }
 
-            console.log( arr );
-
             if( !arr ){
 
                 return res.status( 400 ).json({ message: 'Nenhum animal perdido' });
@@ -131,21 +129,22 @@ export default class Animals {
 
     async create( req, res ) {
 
-        console.log( req.body );
-        console.log( req.file );
-
-        let { name, age, info, city, state, id_keeper } = req.body;
+        let { name, age, info, city, uf: state, id_keeper } = req.body;
         let{ originalname, size, key, location: url = "" } = req.file;
 
+        let auth = req['headers']['authorization'].replace( 'Bearer', '' ).trim();
+
         name = name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
-        age = age.replace( /([^0-9a-zA-Z])/g, '' );
-        info = info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{2,}])/g, '' );
-        city = city.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
-        state = state.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
+        age = age.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
+        info = info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+        city = city && city.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+        state = state && state.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
 
         if( !url ) {
             url = ( process.env.NODE_DEV == 'DEVELOPMENT' ? process.env.PATH_LOCAL + key : key ) 
         }
+        
+        const data = await con( 'users' ).where( 'token', auth ).select( 'id' ).first();
 
         const url_image = url;
 
@@ -161,8 +160,15 @@ export default class Animals {
                 state, 
                 url_image, 
                 status: false, 
-                id_keeper
-            });
+                id_keeper: data.id
+            }).catch( async er => {
+                
+                await trx.rollback();
+                await trx.commit();
+
+                console.log( er );
+                return res.status( 400 ).json({ message: 'Ocorreu um erro ao registrar o caso no banco, tente novamente' })
+            } );
 
             await trx.commit();
 
@@ -171,7 +177,7 @@ export default class Animals {
                 return res.status( 400 ).json({ message: 'Não foi possível cadastrar' })
             }
 
-            return res.json( animal[0] );
+            return res.json({ id: animal[0] });
 
         }catch ( er ) {
 
@@ -183,6 +189,7 @@ export default class Animals {
     async update( req, res ) {
 
         let { name, age, info, city, state, status } = req.body;
+        console.log( { name, age, info, city, state, status } );
         const { id } = req.params;
         let url_image;
         
@@ -214,11 +221,11 @@ export default class Animals {
             
             if( name || age || info || city || state || url_image || status  || id_finder ) {
                 
-                name = name && name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
-                age = age && age.replace( /([^0-9a-zA-Z])/g, '' );
-                info = info && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
-                city = city && info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
-                state = state && info.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
+                name = name.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+                age = age.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
+                info = info.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+                city = city && city.normalize( 'NFD' ).replace( /([^\u0300-\u036f0-9a-zA-Z/\s{1,}])/g, '' );
+                state = state && state.replace( /([^0-9a-zA-Z/\s{1,}])/g, '' );
                 
                 let animal = { 
                     name, 
@@ -233,7 +240,13 @@ export default class Animals {
 
                 try {
 
-                    const upd = await con( 'animals' ).where( 'id', id ).update( animal );
+                    const upd = await con( 'animals' )
+                    .where( 'id', id )
+                    .update( animal )
+                    .catch( er => {
+
+                        console.log( er );
+                    } );
 
                     if( !upd ) {
                     
