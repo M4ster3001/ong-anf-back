@@ -21,7 +21,7 @@ if( process.env.NODE_DEV == 'DEVELOPMENT' ) {
 
     routes.get( '/', ( req, res ) => { res.status( 200 ).json({ message: 'Ok get' });  });
     routes.post( '/', ( req, res ) => { res.status( 200 ).json({ message: 'Ok post' });  });
-    
+    routes.get( '/users', usersControllers.index );
 }
 
 //State
@@ -31,7 +31,6 @@ routes.get( '/states', locationController.states );
 routes.get( '/cities/:uf', locationController.cities );
 
 //Users
-routes.get( '/users', usersControllers.index );
 routes.post( '/login', Login.validations, usersControllers.login );
 routes.get( '/users/profile', usersControllers.show );
 routes.post( '/users/register', User.validations, usersControllers.create );
